@@ -1,5 +1,4 @@
 Flask
 CORS
 requests
-re
 Gunicorn
