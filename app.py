@@ -26,3 +26,6 @@ def convert_link():
     mobile_link = data.get('url')
     desktop_link = mobile_to_desktop_tiktok(mobile_link)
     return jsonify({'desktop_link': desktop_link})
+
+if __name__ == '__main__':
+    app.run(debug=True)
