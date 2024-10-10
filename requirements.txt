@@ -1,5 +1,5 @@
 Flask
-Flask_Cors
-Requests
-Re
+CORS
+requests
+re
 Gunicorn
