@@ -1,5 +1,4 @@
 Flask
-flask_cores
-CORS
+flask-cores
 requests
 Gunicorn
