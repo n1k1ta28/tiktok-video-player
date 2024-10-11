@@ -30,7 +30,7 @@ def mobile_to_desktop_tiktok(mobile_url):
         return None
 
 
-@app.route('/convert', methods=['POST'])
+@app.route('api/convert', methods=['POST'])
 def convert():
     data = request.json
     mobile_link = data.get('url')
