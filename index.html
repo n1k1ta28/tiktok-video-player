@@ -187,7 +187,7 @@
             }, 1000);
 
             if (url.includes('vm.tiktok.com')) { // Check if it's a mobile link
-                fetch('https://tiktok-video-player.vercel.app/convert', {
+                fetch('/api/convert', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
