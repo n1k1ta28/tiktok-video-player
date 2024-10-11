@@ -22,10 +22,21 @@ def mobile_to_desktop_tiktok(mobile_url):
 
 @app.route('/convert', methods=['POST'])
 def convert_link():
-    data = request.json
-    mobile_link = data.get('url')
-    desktop_link = mobile_to_desktop_tiktok(mobile_link)
-    return jsonify({'desktop_link': desktop_link})
+    try:
+        data = request.json
+        mobile_link = data.get('url')
+
+        # Ensure the URL is provided
+        if not mobile_link:
+            return jsonify({'error': 'No URL provided'}), 400
+
+        desktop_link = mobile_to_desktop_tiktok(mobile_link)
+        if desktop_link:
+            return jsonify({'desktop_link': desktop_link})
+        else:
+            return jsonify({'error': 'Invalid mobile TikTok URL'}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500  # Return error message as JSON
 
 @app.route('/')
 def index():
