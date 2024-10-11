@@ -13,11 +13,13 @@ def mobile_to_desktop_tiktok(mobile_url):
         print(f"Response URL: {response.url}")  # Log the redirected URL
         if response.status_code == 200:
             redirected_url = response.url
-            match = re.search(r'@(.*?)\/video\/(\d+)|\/video\/(\d+)', redirected_url)
+            match = re.search(r'@(.*?)\/(video|photo)\/(\d+)', redirected_url)
             if match:
                 username = match.group(1)
-                video_id = match.group(2) or match.group(3)
-                return f"https://www.tiktok.com/@{username}/video/{video_id}" if username else f"https://www.tiktok.com/video/{video_id}"
+                content_type = match.group(2)  # video or photo
+                content_id = match.group(3)
+                print(f"Detected {content_type}: {content_id}")
+                return f"https://www.tiktok.com/@{username}/{content_type}/{content_id}" if username else f"https://www.tiktok.com/{content_type}/{content_id}"
             else:
                 return None
         else:
@@ -27,7 +29,8 @@ def mobile_to_desktop_tiktok(mobile_url):
         print(f"Error fetching URL: {e}")  # Print any errors encountered
         return None
 
-@app.route('/api/convert', methods=['POST'])
+
+@app.route('/convert', methods=['POST'])
 def convert():
     data = request.json
     mobile_link = data.get('url')

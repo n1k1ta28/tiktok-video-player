@@ -136,6 +136,17 @@
             margin-top: 10px; /* Space above the changing text */
             font-size: 20px; /* Font size for changing text */
         }
+
+        /* TikTok Link Styling */
+        .tiktok-link {
+            color: green;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .tiktok-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -160,16 +171,19 @@
     <div class="rotated-text right-text">N1k1t@</div>
 
     <script>
+        let textInterval; // Declare textInterval in the outer scope to access it in multiple functions
+
         document.getElementById('loadVideo').addEventListener('click', function() {
             const url = document.getElementById('videoUrl').value;
-
+    
             // Show the loading bar and text
             document.getElementById('loadingBarContainer').style.display = 'block';
             document.getElementById('changingText').style.display = 'block';
-
+    
             // Clear any previous video content
             document.getElementById('videoContainer').innerHTML = '';
-
+            document.getElementById('changingText').innerText = ''; // Clear previous text
+    
             // Change texts during loading
             const messages = [
                 "Hacking your TikTok account...",
@@ -179,15 +193,15 @@
                 "Almost there...",
             ];
             let index = 0;
-
+    
             // Update changing text every second
-            const textInterval = setInterval(() => {
+            textInterval = setInterval(() => {
                 document.getElementById('changingText').innerText = messages[index];
                 index = (index + 1) % messages.length; // Loop through messages
             }, 1000);
-
+    
             if (url.includes('vm.tiktok.com')) { // Check if it's a mobile link
-                fetch('/api/convert', {
+                fetch('http://127.0.0.1:5000/convert', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -198,58 +212,59 @@
                 .then(data => {
                     const desktopUrl = data.desktop_link;
                     if (desktopUrl) {
-                        const videoId = extractVideoId(desktopUrl);
-                        if (videoId) {
-                            setTimeout(() => {
-                                const iframeHtml = `<iframe src="https://www.tiktok.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
-                                document.getElementById('videoContainer').innerHTML = iframeHtml;
-                                // Hide the loading bar and changing text
-                                document.getElementById('loadingBarContainer').style.display = 'none';
-                                document.getElementById('changingText').style.display = 'none';
-                                clearInterval(textInterval); // Stop changing text
-                            }, 5000); // Wait for 5 seconds before showing the video
-                        } else {
-                            alert('Could not extract video ID.');
-                            clearInterval(textInterval); // Stop changing text on error
-                        }
+                        handleTikTokContent(desktopUrl);
                     } else {
                         alert('Invalid mobile TikTok URL or conversion failed.');
                         clearInterval(textInterval); // Stop changing text on error
+                        document.getElementById('loadingBarContainer').style.display = 'none'; // Hide loading bar
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);  // Log the error
                     alert('Error converting the mobile link: ' + error.message);
-                    // Hide the loading bar in case of an error
                     document.getElementById('loadingBarContainer').style.display = 'none';
                     document.getElementById('changingText').style.display = 'none';
                     clearInterval(textInterval); // Stop changing text on error
                 });
             } else {
-                const videoId = extractVideoId(url);
-                if (videoId) {
-                    setTimeout(() => {
-                        const iframeHtml = `<iframe src="https://www.tiktok.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
-                        document.getElementById('videoContainer').innerHTML = iframeHtml;
-                        // Hide the loading bar and changing text
-                        document.getElementById('loadingBarContainer').style.display = 'none';
-                        document.getElementById('changingText').style.display = 'none';
-                        clearInterval(textInterval); // Stop changing text
-                    }, 5000); // Wait for 5 seconds before showing the video
-                } else {
-                    alert('Invalid TikTok URL');
-                    document.getElementById('loadingBarContainer').style.display = 'none';
-                    document.getElementById('changingText').style.display = 'none';
-                    clearInterval(textInterval); // Stop changing text on error
-                }
+                handleTikTokContent(url);
             }
         });
+    
+        function handleTikTokContent(url) {
+            const videoId = extractContentId(url);
+            const isPhotoSlideshow = url.includes('/photo/');  // Detect photo slideshows
 
-        function extractVideoId(url) {
-            const regex = /(?:https?:\/\/)?(?:www\.)?(?:tiktok\.com\/@[\w.-]+\/video\/(\d+)|t\.co\/(\w+)|tiktok\.com\/(?:[\w.-]+\/)?video\/(\d+))/;
-            const matches = url.match(regex);
-            return matches ? matches[1] || matches[2] || matches[3] : null;
+            if (videoId) {
+                setTimeout(() => {
+                    let iframeHtml;
+                    if (isPhotoSlideshow) {
+                        // Show a link to the TikTok slideshow if detected
+                        const slideshowLink = `<p style="color: green;">This is a photo slideshow. <a class="tiktok-link" href="${url}" target="_blank">View it on TikTok</a>.</p>`;
+                        document.getElementById('videoContainer').innerHTML = slideshowLink;
+                    } else {
+                        // Embed video as usual
+                        iframeHtml = `<iframe src="https://www.tiktok.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
+                        document.getElementById('videoContainer').innerHTML = iframeHtml;
+                    }
+                    document.getElementById('loadingBarContainer').style.display = 'none';
+                    document.getElementById('changingText').style.display = 'none';
+                    clearInterval(textInterval); // Stop changing text
+                }, 5000); // Wait for 5 seconds before showing the video
+            } else {
+                alert('Invalid TikTok URL');
+                document.getElementById('loadingBarContainer').style.display = 'none';
+                document.getElementById('changingText').style.display = 'none';
+                clearInterval(textInterval); // Stop changing text on error
+            }
         }
-    </script>
+
+        function extractContentId(url) {
+            // Updated regex to support both video and photo IDs
+            const regex = /(?:https?:\/\/)?(?:www\.)?tiktok\.com\/@[\w.-]+\/(?:video|photo)\/(\d+)/;
+            const matches = url.match(regex);
+            return matches ? matches[1] : null;
+        }
+    </script>      
 </body>
 </html>
