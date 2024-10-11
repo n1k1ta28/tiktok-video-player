@@ -201,7 +201,7 @@
                         const videoId = extractVideoId(desktopUrl);
                         if (videoId) {
                             setTimeout(() => {
-                                const iframeHtml = <iframe src="https://www.tiktok.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>;
+                                const iframeHtml = `<iframe src="https://www.tiktok.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
                                 document.getElementById('videoContainer').innerHTML = iframeHtml;
                                 // Hide the loading bar and changing text
                                 document.getElementById('loadingBarContainer').style.display = 'none';
@@ -229,7 +229,7 @@
                 const videoId = extractVideoId(url);
                 if (videoId) {
                     setTimeout(() => {
-                        const iframeHtml = <iframe src="https://www.tiktok.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>;
+                        const iframeHtml = `<iframe src="https://www.tiktok.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
                         document.getElementById('videoContainer').innerHTML = iframeHtml;
                         // Hide the loading bar and changing text
                         document.getElementById('loadingBarContainer').style.display = 'none';
