@@ -188,15 +188,19 @@
 
             // Check if it's a mobile link
             if (url.includes('vm.tiktok.com')) {
-                fetch('/api/convert', {  // Call the Vercel serverless function
+                fetch('https://<your-project-name>.vercel.app/api/convert', {  // Change this URL to your actual Vercel API endpoint
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ url: url })
                 })
-                .then(response => response.json())
+                .then(response => {
+                    console.log("Response:", response); // Log the response
+                    return response.json();
+                })
                 .then(data => {
+                    console.log("Data Received:", data); // Log the received data
                     const desktopUrl = data.desktop_link;
                     if (desktopUrl) {
                         const videoId = extractVideoId(desktopUrl);
@@ -219,7 +223,7 @@
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.error('Error:', error);  // Log the error
                     alert('Error converting the mobile link: ' + error.message);
                     // Hide the loading bar in case of an error
                     document.getElementById('loadingBarContainer').style.display = 'none';
