@@ -27,5 +27,9 @@ def convert_link():
     desktop_link = mobile_to_desktop_tiktok(mobile_link)
     return jsonify({'desktop_link': desktop_link})
 
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
+
 if __name__ == '__main__':
     app.run()
