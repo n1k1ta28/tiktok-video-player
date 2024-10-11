@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask_cors import CORS  # Import CORS
 import requests
 import re
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # Enable CORS for all routes
 
 def mobile_to_desktop_tiktok(mobile_url):
     response = requests.get(mobile_url)
@@ -20,8 +20,8 @@ def mobile_to_desktop_tiktok(mobile_url):
     else:
         return None
 
-@app.route('/api/convert', methods=['POST'])
-def convert():
+@app.route('/convert', methods=['POST'])
+def convert_link():
     data = request.json
     mobile_link = data.get('url')
     desktop_link = mobile_to_desktop_tiktok(mobile_link)
