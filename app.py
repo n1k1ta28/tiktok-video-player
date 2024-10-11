@@ -17,7 +17,10 @@ def mobile_to_desktop_tiktok(mobile_url):
             if match:
                 username = match.group(1)
                 video_id = match.group(2)
-                return f"https://www.tiktok.com/@{username}/video/{video_id}" if username else f"https://www.tiktok.com/video/{video_id}"
+                if 'video' in redirected_url:
+                    return f"https://www.tiktok.com/@{username}/video/{video_id}" if username else f"https://www.tiktok.com/video/{video_id}"
+                elif 'photo' in redirected_url:
+                    return f"https://www.tiktok.com/@{username}/photo/{video_id}" if username else f"https://www.tiktok.com/photo/{video_id}"
             else:
                 return None
         else:
