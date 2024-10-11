@@ -201,7 +201,7 @@
             }, 1000);
     
             if (url.includes('vm.tiktok.com')) { // Check if it's a mobile link
-                fetch('api/convert', {
+                fetch('/api/convert', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
