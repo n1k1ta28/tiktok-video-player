@@ -20,8 +20,8 @@ def mobile_to_desktop_tiktok(mobile_url):
     else:
         return None
 
-# Function to handle the POST request
-def handler(request):
+@app.route('/api/convert', methods=['POST'])
+def convert():
     data = request.json
     mobile_link = data.get('url')
     desktop_link = mobile_to_desktop_tiktok(mobile_link)
