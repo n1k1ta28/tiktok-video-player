@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TikTok Video Player</title>
     <style>
-        /* Your existing styles here */
+        /* Center all content and set full black background */
         body, html {
             margin: 0;
             padding: 0;
@@ -17,13 +17,13 @@
             background-color: black; /* Full black background */
             color: green; /* Text color set to green */
         }
-        
+
         /* Main container to hold content */
         .container {
             text-align: center;
             z-index: 1; /* Make sure the main content stays above the rotated text */
         }
-        
+
         /* Responsive video container */
         #videoContainer {
             display: flex;
@@ -33,14 +33,109 @@
         }
 
         /* Set iframe video to take max width & height */
-        iframe, img {
+        iframe {
             width: 100%;
             height: calc(100vh - 150px); /* Leaves room for header and input */
             max-width: 700px; /* Optional max width for large screens */
             max-height: 90vh; /* Optional max height */
         }
 
-        /* Other existing styles remain unchanged */
+        /* Styling input and button with green text on black */
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: black; /* Black background */
+            color: green; /* Green text */
+            border: 1px solid green; /* Green border */
+        }
+
+        button {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        /* Change button hover effect */
+        button:hover {
+            background-color: green;
+            color: black;
+        }
+
+        /* Input focus and hover effect */
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 10px green;
+        }
+
+        /* Rotated text styling */
+        .rotated-text {
+            position: fixed;
+            font-size: 100px; /* Large text size */
+            color: rgb(0, 255, 0);
+            z-index: 0; /* Positioned behind main content */
+            transform: rotate(45deg); /* Rotate by 45 degrees */
+            opacity: 0.7; /* Optional: Add transparency to make it subtle */
+            pointer-events: none; /* So that text doesn't interfere with clicks */
+            animation: blink 1s infinite; /* Blinking animation */
+        }
+
+        /* Blinking animation */
+        @keyframes blink {
+            0%, 50% {
+                opacity: 0.7;
+            }
+            50%, 100% {
+                opacity: 0;
+            }
+        }
+
+        /* Left side text */
+        .left-text {
+            top: 60%;
+            left: +150px; /* Adjust as needed to align properly */
+            transform-origin: left center;
+        }
+
+        /* Right side text */
+        .right-text {
+            top: 28%;
+            right: +150px; /* Adjust as needed to align properly */
+            transform-origin: right center;
+        }
+
+        /* Loading bar container */
+        #loadingBarContainer {
+            width: 100%;
+            max-width: 700px;
+            height: 10px;
+            background-color: black; /* Black background for the container */
+            border: 1px solid green; /* Green border */
+            margin: 20px 0; /* Add vertical margin for spacing (top and bottom) */
+            display: none; /* Hide by default */
+        }
+
+        /* Loading bar itself */
+        #loadingBar {
+            width: 0;
+            height: 100%;
+            background-color: green; /* Green loading bar */
+            animation: loading 5s linear forwards;
+        }
+
+        /* Loading animation */
+        @keyframes loading {
+            0% {
+                width: 0;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+
+        /* Changing texts container */
+        #changingText {
+            margin-top: 10px; /* Space above the changing text */
+            font-size: 20px; /* Font size for changing text */
+        }
     </style>
 </head>
 <body>
@@ -102,24 +197,17 @@
                 .then(response => response.json())
                 .then(data => {
                     const desktopUrl = data.desktop_link;
-                    const contentType = data.content_type; // New line to capture content type
                     if (desktopUrl) {
                         const videoId = extractVideoId(desktopUrl);
                         if (videoId) {
                             setTimeout(() => {
-                                // Check content type and load appropriate content
-                                if (contentType === "video") {
-                                    const iframeHtml = `<iframe src="https://www.tiktok.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
-                                    document.getElementById('videoContainer').innerHTML = iframeHtml;
-                                } else if (contentType === "photo") {
-                                    const imgHtml = `<img src="${desktopUrl}" alt="TikTok Photo">`;
-                                    document.getElementById('videoContainer').innerHTML = imgHtml;
-                                }
+                                const iframeHtml = <iframe src="https://www.tiktok.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>;
+                                document.getElementById('videoContainer').innerHTML = iframeHtml;
                                 // Hide the loading bar and changing text
                                 document.getElementById('loadingBarContainer').style.display = 'none';
                                 document.getElementById('changingText').style.display = 'none';
                                 clearInterval(textInterval); // Stop changing text
-                            }, 5000); // Wait for 5 seconds before showing the content
+                            }, 5000); // Wait for 5 seconds before showing the video
                         } else {
                             alert('Could not extract video ID.');
                             clearInterval(textInterval); // Stop changing text on error
@@ -141,7 +229,7 @@
                 const videoId = extractVideoId(url);
                 if (videoId) {
                     setTimeout(() => {
-                        const iframeHtml = `<iframe src="https://www.tiktok.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
+                        const iframeHtml = <iframe src="https://www.tiktok.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>;
                         document.getElementById('videoContainer').innerHTML = iframeHtml;
                         // Hide the loading bar and changing text
                         document.getElementById('loadingBarContainer').style.display = 'none';
@@ -158,7 +246,7 @@
         });
 
         function extractVideoId(url) {
-            const regex = /(?:https?:\/\/)?(?:www\.)?(?:tiktok\.com\/@[\w.-]+\/video\/(\d+)|t\.co\/(\w+)|tiktok\.com\/(?:[\w.-]+\/)?video\/(\d+)/;
+            const regex = /(?:https?:\/\/)?(?:www\.)?(?:tiktok\.com\/@[\w.-]+\/video\/(\d+)|t\.co\/(\w+)|tiktok\.com\/(?:[\w.-]+\/)?video\/(\d+))/;
             const matches = url.match(regex);
             return matches ? matches[1] || matches[2] || matches[3] : null;
         }
