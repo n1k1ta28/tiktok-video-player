@@ -97,7 +97,7 @@
 
         /* Right side text */
         .right-text {
-            top: 30%;
+            top: 28%;
             right: +150px; /* Adjust as needed to align properly */
             transform-origin: right center;
         }
@@ -186,23 +186,16 @@
                 index = (index + 1) % messages.length; // Loop through messages
             }, 1000);
 
-            // Check if it's a mobile link
-            if (url.includes('vm.tiktok.com')) {
-                fetch('/api/convert', {
+            if (url.includes('vm.tiktok.com')) { // Check if it's a mobile link
+                fetch('https://tiktok-video-player.vercel.app/convert', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ url: url })
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok: ' + response.statusText);
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
-                    console.log("Data Received:", data); // Log the received data
                     const desktopUrl = data.desktop_link;
                     if (desktopUrl) {
                         const videoId = extractVideoId(desktopUrl);
@@ -253,9 +246,9 @@
         });
 
         function extractVideoId(url) {
-            const regex = /(?:https?:\/\/)?(?:www\.)?(?:tiktok\.com\/@[\w.-]+\/video\/(\d+)|t\.co\/(\w+)|tiktok\.com\/(?:[\w.-]+\/)?video\/(\d+)/;
+            const regex = /(?:https?:\/\/)?(?:www\.)?(?:tiktok\.com\/@[\w.-]+\/video\/(\d+)|t\.co\/(\w+)|tiktok\.com\/(?:[\w.-]+\/)?video\/(\d+))/;
             const matches = url.match(regex);
-            return matches ? (matches[1] || matches[2] || matches[3]) : null;
+            return matches ? matches[1] || matches[2] || matches[3] : null;
         }
     </script>
 </body>
