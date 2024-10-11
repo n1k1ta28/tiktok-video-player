@@ -28,4 +28,4 @@ def convert_link():
     return jsonify({'desktop_link': desktop_link})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
