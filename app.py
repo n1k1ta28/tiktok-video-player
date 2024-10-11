@@ -18,27 +18,27 @@ def mobile_to_desktop_tiktok(mobile_url):
                 username = match.group(1)
                 video_id = match.group(2)
                 if 'video' in redirected_url:
-                    return f"https://www.tiktok.com/@{username}/video/{video_id}" if username else f"https://www.tiktok.com/video/{video_id}"
+                    return f"https://www.tiktok.com/@{username}/video/{video_id}", "video"
                 elif 'photo' in redirected_url:
-                    return f"https://www.tiktok.com/@{username}/photo/{video_id}" if username else f"https://www.tiktok.com/photo/{video_id}"
+                    return f"https://www.tiktok.com/@{username}/photo/{video_id}", "photo"
             else:
-                return None
+                return None, None
         else:
             print(f"Failed to fetch TikTok URL, Status Code: {response.status_code}, Response: {response.text}")  # Log failure
-            return None
+            return None, None
     except Exception as e:
         print(f"Error fetching URL: {e}")  # Print any errors encountered
-        return None
+        return None, None
 
 @app.route('/api/convert', methods=['POST'])
 def convert():
     data = request.json
     mobile_link = data.get('url')
     print("Mobile Link Received:", mobile_link)  # Debugging line
-    desktop_link = mobile_to_desktop_tiktok(mobile_link)
+    desktop_link, content_type = mobile_to_desktop_tiktok(mobile_link)
     
     if desktop_link:
-        return jsonify({'desktop_link': desktop_link})
+        return jsonify({'desktop_link': desktop_link, 'content_type': content_type})
     else:
         return jsonify({'error': 'Could not convert the mobile link.'}), 400
 
