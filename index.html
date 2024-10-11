@@ -186,8 +186,9 @@
                 index = (index + 1) % messages.length; // Loop through messages
             }, 1000);
 
-            if (url.includes('vm.tiktok.com')) { // Check if it's a mobile link
-                fetch('http://127.0.0.1:5000/convert', {
+            // Check if it's a mobile link
+            if (url.includes('vm.tiktok.com')) {
+                fetch('/api/convert', {  // Call the Vercel serverless function
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -218,7 +219,7 @@
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);  // Log the error
+                    console.error('Error:', error);
                     alert('Error converting the mobile link: ' + error.message);
                     // Hide the loading bar in case of an error
                     document.getElementById('loadingBarContainer').style.display = 'none';
@@ -246,7 +247,7 @@
         });
 
         function extractVideoId(url) {
-            const regex = /(?:https?:\/\/)?(?:www\.)?(?:tiktok\.com\/@[\w.-]+\/video\/(\d+)|t\.co\/(\w+)|tiktok\.com\/(?:[\w.-]+\/)?video\/(\d+))/;
+            const regex = /(?:https?:\/\/)?(?:www\.)?(?:tiktok\.com\/@[\w.-]+\/video\/(\d+)|t\.co\/(\w+)|tiktok\.com\/(?:[\w.-]+\/)?video\/(\d+)/;
             const matches = url.match(regex);
             return matches ? matches[1] || matches[2] || matches[3] : null;
         }
